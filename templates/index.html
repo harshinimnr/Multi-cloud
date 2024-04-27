@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation Finder</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transportation Finder</h1>
+
+    <form id="transportationForm">
+        <label for="fromCity">From City:</label>
+        <input type="text" id="fromCity" name="fromCity" required>
+
+        <label for="toCity">To City:</label>
+        <input type="text" id="toCity" name="toCity" required>
+
+        <button type="button" onclick="findBestTransportation()">Find Transportation</button>
+    </form>
+
+    <div id="responseContainer">
+        <p id="responseTime"></p>
+        <div id="tableContainer"></div>
+        <p id="errorMessage" style="color: red;"></p>
+        <div id="loadingIndicator" style="display: none;">Loading...</div>
+    </div>
+
+    <script>
+        function findBestTransportation() {
+            const fromCity = document.getElementById("fromCity").value;
+            const toCity = document.getElementById("toCity").value;
+
+            document.getElementById("errorMessage").innerText = "";
+            document.getElementById("loadingIndicator").style.display = "block";
+
+            const startTime = new Date().getTime();
+
+            fetch(`/find_best_transportation?from_city=${fromCity}&to_city=${toCity}`)
+                .then(response => {
+                    document.getElementById("loadingIndicator").style.display = "none";
+                    return response.json();
+                })
+                .then(data => {
+                    const endTime = new Date().getTime();
+                    const executionTime = endTime - startTime;
+
+                    document.getElementById("responseTime").innerText = `Execution Time: ${executionTime} milliseconds`;
+
+                    // Generate and display the table
+                    const tableHtml = generateTableHtml(data);
+                    document.getElementById("tableContainer").innerHTML = tableHtml;
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    document.getElementById("tableContainer").innerHTML = "";
+                    document.getElementById("errorMessage").innerText = "Error occurred while fetching data.";
+                    document.getElementById("loadingIndicator").style.display = "none";
+                });
+        }
+
+        function generateTableHtml(data) {
+            let tableHtml = "<table>";
+            // Create table header
+            tableHtml += "<tr><th>Mode</th><th>Distance</th><th>Duration</th><th>Directions</th></tr>";
+
+            // Create table rows based on data
+            data.forEach(result => {
+		if (result.error) {
+            		return;
+        	}
+                tableHtml += "<tr>";
+                tableHtml += `<td>${result.mode}</td>`;
+                tableHtml += `<td>${result.distance}</td>`;
+                tableHtml += `<td>${result.duration}</td>`;
+                const directionsHtml = result.directions.map(dir => dir).join('<br>');
+        	tableHtml += `<td>${directionsHtml}</td>`;
+                tableHtml += "</tr>";
+            });
+
+            tableHtml += "</table>";
+            return tableHtml;
+        }
+    </script>
+</body>
+</html>
