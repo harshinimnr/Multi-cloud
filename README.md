@@ -67,7 +67,7 @@ The adoption of a microservices architecture enhances scalability, maintainabili
 ## Project Links
 - **Amazon Web Services**: [AWS URL](http://3.144.72.249)
 - **Google Cloud Platform**: [GCP URL](https://tribal-bay-407302.oa.r.appspot.com)
-- **Git**: [Repository](https://github.iu.edu/hmn/ENGR516-MultiCloud)
+- **Git**: [Repository](https://github.com/harshinimnr/Multi-cloud)
 
 ## References
 1. Hamza Ali Imran, et al. "Multi-Cloud: A Comprehensive Review." IEEE. [Link](https://ieeexplore.ieee.org/abstract/document/9318176)
